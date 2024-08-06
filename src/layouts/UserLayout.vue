@@ -1,9 +1,12 @@
 <template>
-  <div id="basicLayout">
+  <div id="userLayout">
     <a-layout style="min-height: 100vh">
       <!-- Header -->
       <a-layout-header class="header">
-        <GlobalHeader />
+        <a-space>
+          <img src="@/assets/oj-logo.svg" alt="oj-logo" class="logo" />
+          <div class="title">风帆OJ</div>
+        </a-space>
       </a-layout-header>
       <!-- Content -->
       <a-layout-content class="content">
@@ -24,22 +27,40 @@
 </template>
 
 <style scoped>
-#basicLayout {
+#userLayout {
+  text-align: center;
+  background: url("https://kusanagi.oss-cn-beijing.aliyuncs.com/oj/FfdJeJRQWjEeGTpqgBKj.png")
+    0% 0% / 100% 100%;
 }
 
-#basicLayout .header {
-  margin-bottom: 16px;
-  box-shadow: #eee 1px 1px 5px;
+#userLayout .logo {
+  width: 50px;
 }
 
-#basicLayout .content {
-  background: linear-gradient(to right, #bbb, #fff);
+#userLayout .title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+#userLayout .header {
+  margin-top: 16px;
+}
+
+#userLayout .content {
   margin-bottom: 16px;
   padding: 20px;
 }
 
-#basicLayout .footer {
-  background: #efefef;
+#userLayout .footer {
   padding: 16px;
   position: relative;
   bottom: 0;
@@ -58,10 +79,9 @@
 }
 
 .footer-link:hover {
+  background-color: #f8f9fa;
   color: #343a40;
 }
 </style>
 
-<script setup lang="ts">
-import GlobalHeader from "@/components/GlobalHeader.vue";
-</script>
+<script setup lang="ts"></script>
