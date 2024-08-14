@@ -66,10 +66,11 @@ import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import { IconEdit, IconExport, IconUser } from "@arco-design/web-vue/es/icon";
 import ACCESS_ENUM from "@/access/ACCESS_ENUM";
+import { UserVO } from "../../generated";
 
 const router = useRouter();
 const store = useStore(); // 拿到vuex的store
-const loginUser = computed(() => store.state.user.loginUser); // 拿到登录用户信息，必须使用computed计算属性，不然不是响应式
+const loginUser = computed(() => store.state.user.loginUser as UserVO); // 拿到登录用户信息，必须使用computed计算属性，不然不是响应式
 
 // 展示在菜单的路由数组，同样要使用computed计算属性，用户信息变更时，触发菜单栏的重新渲染
 const visibleRoutes = computed(() => {
@@ -89,13 +90,17 @@ const visibleRoutes = computed(() => {
 // 默认主页
 const selectedKeys = ref(["/"]);
 // 头像
-const avatarUrl = loginUser.value.userAvatar
-  ? loginUser.value.userAvatar
-  : "https://pic.imgdb.cn/item/61f0e5ff2ab3f51d915f9023.png";
+const avatarUrl = computed(() => {
+  return loginUser.value.userAvatar
+    ? loginUser.value.userAvatar
+    : "https://pic.imgdb.cn/item/61f0e5ff2ab3f51d915f9023.png";
+});
 
-const isLoggedIn = loginUser.value.userRole !== ACCESS_ENUM.NOT_LOGIN;
-const authIcon = computed(() => (isLoggedIn ? IconExport : IconUser));
-const authText = computed(() => (isLoggedIn ? "退出登录" : "用户登录"));
+const isLoggedIn = computed(() => {
+  return loginUser.value.userRole !== ACCESS_ENUM.NOT_LOGIN;
+});
+const authIcon = computed(() => (isLoggedIn.value ? IconExport : IconUser));
+const authText = computed(() => (isLoggedIn.value ? "退出登录" : "用户登录"));
 
 // -------------------- 方法 --------------------------
 // 路由跳转后，更新选中的菜单项
@@ -122,7 +127,7 @@ const handleAuthAction = () => {
 // 退出登录
 const logout = async () => {
   await store.dispatch("user/logout");
-  router.push("/user/login");
+  router.push("/");
 };
 
 // 前往登录页

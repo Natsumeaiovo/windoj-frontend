@@ -1,18 +1,28 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    获取到MonacoEditor中代码：{{ codeValue }}
+    <CodeEditor :value="codeValue" :handle-change="onCodeChange" />
+    <MdEditor :value="mdValue" :handle-change="onMdChange" />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+<script setup lang="ts">
+import { ref } from "vue";
+import MdEditor from "@/components/MdEditor.vue";
+import CodeEditor from "@/components/CodeEditor.vue";
 
-export default defineComponent({
-  name: "HomeView",
-  components: {
-    HelloWorld,
-  },
-});
+const mdValue = ref();
+const codeValue = ref();
+
+const onMdChange = (v: string) => {
+  // console.log("编辑文本时，onChange触发");
+  mdValue.value = v;
+  console.log(v);
+};
+
+const onCodeChange = (v: string) => {
+  // console.log("编辑文本时，onChange触发");
+  codeValue.value = v;
+  console.log(v);
+};
 </script>
