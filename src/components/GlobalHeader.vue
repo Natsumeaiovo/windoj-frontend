@@ -74,7 +74,7 @@ const loginUser = computed(() => store.state.user.loginUser as UserVO); // 拿�
 
 // 展示在菜单的路由数组，同样要使用computed计算属性，用户信息变更时，触发菜单栏的重新渲染
 const visibleRoutes = computed(() => {
-  return routes.filter((item, index) => {
+  return routes.filter((item) => {
     // 1. 如果路由meta里定义了hideInMenu就隐藏
     if (item.meta?.hideInMenu) {
       return false;
@@ -104,7 +104,7 @@ const authText = computed(() => (isLoggedIn.value ? "退出登录" : "用户登�
 
 // -------------------- 方法 --------------------------
 // 路由跳转后，更新选中的菜单项
-router.afterEach((to, from, failure) => {
+router.afterEach((to) => {
   selectedKeys.value = [to.path];
 });
 
