@@ -8,7 +8,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import HelloWorld from "@/components/HelloWorld.vue";
+import { useRouter } from "vue-router";
+import store from "@/store"; // @ is an alias to /src
+
+console.log(store.state.user.loginUser);
 
 export default defineComponent({
   name: "HomeView",

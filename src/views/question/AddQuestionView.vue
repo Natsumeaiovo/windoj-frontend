@@ -167,7 +167,7 @@ const handleSubmit = async () => {
 };
 
 /**
- * MdEditor 内容和答案变化时，将其内容填充到 form 中
+ * MdEditor 题目内容 和 题目答案 变化时，将其内容填充到 form 中
  * @param value
  */
 const onContentChange = (value: string) => {
@@ -183,7 +183,7 @@ const onAnswerChange = (value: string) => {
   h1 {
     margin-top: 0;
     margin-bottom: 20px;
-    margin-left: 720px;
+    margin-left: 680px;
   }
 }
 </style>
