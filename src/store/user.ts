@@ -2,6 +2,7 @@ import { StoreOptions } from "vuex";
 import ACCESS_ENUM from "@/access/ACCESS_ENUM";
 import { User, UserControllerService } from "../../generated";
 import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export default {
   namespaced: true,
@@ -50,7 +51,7 @@ export default {
         const response = await UserControllerService.getLoginUserUsingGet();
         // 如果返回了40100错误，那么就说明cookie无效
         if (response.code === 40100) {
-          console.log("cookie已失效！已重置state");
+          Message.warning("用户登录信息已失效，请重新登录！");
           dispatch("resetState");
         } else {
           console.log("cookie没过期");

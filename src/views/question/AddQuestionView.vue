@@ -1,6 +1,6 @@
 <template>
   <div id="addQuestionView">
-    <h1>创建题目</h1>
+    <h1>{{ title }}</h1>
     <a-form :model="form" label-align="right" @submit="handleSubmit">
       <a-form-item field="title" label="标题">
         <a-input
@@ -108,22 +108,23 @@
 
 <script setup lang="ts">
 import MdEditor from "@/components/MdEditor.vue";
-import { reactive } from "vue";
-import {
-  QuestionAddRequest,
-  QuestionControllerService,
-} from "../../../generated";
+import { onMounted, ref, watch } from "vue";
+import { QuestionControllerService } from "../../../generated";
 import { Message } from "@arco-design/web-vue";
+import { useRoute } from "vue-router";
 
-const form = reactive({
-  title: "A + B",
-  tags: ["栈", "简单"],
-  answer: "暴力破解",
-  content: "题目内容",
+let title = "创建题目";
+const route = useRoute();
+// 初始表单状态
+const initForm = ref({
+  title: "",
+  tags: [],
+  answer: "",
+  content: "",
   judgeCase: [
     {
-      input: "1 2",
-      output: "3 4",
+      input: "",
+      output: "",
     },
   ],
   judgeConfig: {
@@ -132,12 +133,70 @@ const form = reactive({
     timeLimit: 1000,
   },
 });
+const form = ref({ ...initForm.value });
+
+// 如果页面地址包含update，视为更新页面
+const isUpdatePage = route.path.includes("update");
+// 如果要跳转到创建题目页面，那么更新标题，并更新表单到初始状态
+watch(route, (newRoute) => {
+  if (newRoute.path === "/add/question") {
+    title = "创建题目";
+    form.value = { ...initForm.value };
+  }
+});
+
+onMounted(() => {
+  // 如果是更新题目页面，那么获取该题目的信息
+  if (isUpdatePage) {
+    loadData();
+  }
+});
+
+/**
+ * 在更新页面，根据题目 id 获取该题目信息
+ */
+const loadData = async () => {
+  const id = route.query.id;
+  if (!id) {
+    return;
+  }
+  title = "更新题目";
+  const res = await QuestionControllerService.getQuestionByIdUsingGet(
+    id as any
+  );
+  if (res.code === 0) {
+    form.value = res.data as any;
+    form.value.tags = JSON.parse(form.value.tags as any);
+    if (!form.value.judgeConfig) {
+      form.value.judgeConfig = {
+        memoryLimit: 1000,
+        stackLimit: 1000,
+        timeLimit: 1000,
+      };
+    } else {
+      form.value.judgeConfig = JSON.parse(form.value.judgeConfig as any);
+    }
+    if (!form.value.judgeCase) {
+      form.value.judgeCase = [
+        {
+          input: "",
+          output: "",
+        },
+      ];
+    } else {
+      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
+    }
+  } else {
+    Message.error("加载失败！" + res.message);
+  }
+};
+
 /**
  * 新增测试用例
  */
 const handleAdd = () => {
-  if (form.judgeCase) {
-    form.judgeCase.push({
+  if (form.value.judgeCase) {
+    form.value.judgeCase.push({
       input: "",
       output: "",
     });
@@ -148,8 +207,8 @@ const handleAdd = () => {
  * @param index
  */
 const handleDelete = (index: number) => {
-  if (form.judgeCase) {
-    form.judgeCase.splice(index, 1);
+  if (form.value.judgeCase) {
+    form.value.judgeCase.splice(index, 1);
   }
 };
 
@@ -158,11 +217,26 @@ const handleDelete = (index: number) => {
  */
 const handleSubmit = async () => {
   console.log(form);
-  const res = await QuestionControllerService.addQuestionUsingPost(form);
-  if (res.code === 0) {
-    Message.success("创建题目成功！");
+  if (isUpdatePage) {
+    // 如果是更新页面
+    const res = await QuestionControllerService.updateQuestionUsingPost(
+      form.value
+    );
+    if (res.code === 0) {
+      Message.success("更新题目成功！");
+    } else {
+      Message.error("更新题目失败！" + res.message);
+    }
   } else {
-    Message.error("创建题目失败！" + res.message);
+    // 如果是创建题目页面
+    const res = await QuestionControllerService.addQuestionUsingPost(
+      form.value
+    );
+    if (res.code === 0) {
+      Message.success("创建题目成功！");
+    } else {
+      Message.error("创建题目失败！" + res.message);
+    }
   }
 };
 
@@ -171,10 +245,10 @@ const handleSubmit = async () => {
  * @param value
  */
 const onContentChange = (value: string) => {
-  form.content = value;
+  form.value.content = value;
 };
 const onAnswerChange = (value: string) => {
-  form.answer = value;
+  form.value.answer = value;
 };
 </script>
 

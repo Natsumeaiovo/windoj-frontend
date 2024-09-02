@@ -1,11 +1,21 @@
 <template>
   <div id="manageQuestionView">
     <h1>管理题目</h1>
-    <a-table :columns="columns" :data="dataList">
+    <a-table
+      :columns="columns"
+      :data="dataList"
+      :pagination="{
+        showTotal: true,
+        pageSize: searchParams.pageSize,
+        current: searchParams.pageNum,
+        total,
+      }"
+    >
       <template #optional="{ record }">
-        <a-button @click="$modal.info({ title: 'Name', content: record.name })">
-          view
-        </a-button>
+        <a-space>
+          <a-button type="primary" @click="doUpdate(record)"> 修改</a-button>
+          <a-button status="danger" @click="doDelete(record)"> 删除</a-button>
+        </a-space>
       </template>
     </a-table>
   </div>
@@ -13,13 +23,15 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { QuestionControllerService } from "../../../generated";
+import { Question, QuestionControllerService } from "../../../generated";
 import { Message } from "@arco-design/web-vue";
+import { useRouter } from "vue-router";
 
 const show = ref(true);
 
 const dataList = ref([]); // 保存所有题目的列表
 const total = ref(0); // 题目总数
+// 分页查找参数
 const searchParams = ref({
   pageSize: 10,
   pageNum: 1,
@@ -29,6 +41,7 @@ const loadData = async () => {
   const res = await QuestionControllerService.listQuestionByPageUsingPost(
     searchParams.value
   );
+  // console.log(res);
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = res.data.total;
@@ -94,6 +107,29 @@ const columns = [
     slotName: "optional",
   },
 ];
+
+const doDelete = async (question: Question) => {
+  const res = await QuestionControllerService.deleteQuestionUsingPost({
+    id: question.id,
+  });
+  if (res.code === 0) {
+    Message.success("删除成功！");
+    await loadData();
+  } else {
+    Message.error("删除失败！" + res.message);
+  }
+};
+
+const router = useRouter();
+
+const doUpdate = (question: Question) => {
+  router.push({
+    path: "/update/question",
+    query: {
+      id: question.id,
+    },
+  });
+};
 </script>
 
 <style scoped>
