@@ -1,7 +1,9 @@
 <template>
   <div id="addQuestionView">
-    <h1>{{ title }}</h1>
     <a-form :model="form" label-align="right" @submit="handleSubmit">
+      <a-form-item field="pageFunc">
+        <h1>{{ title }}</h1>
+      </a-form-item>
       <a-form-item field="title" label="标题">
         <a-input
           v-model="form.title"
@@ -83,17 +85,15 @@
             <a-button
               status="danger"
               @click="handleDelete(index)"
-              style="margin-bottom: 16px"
+              style="margin-bottom: 12px"
             >
               删除测试用例{{ index + 1 }}
             </a-button>
           </a-space>
         </a-form-item>
-        <div>
-          <a-button @click="handleAdd" type="outline" status="success">
-            新增测试用例
-          </a-button>
-        </div>
+        <a-button @click="handleAdd" type="outline" status="success">
+          新增测试用例
+        </a-button>
       </a-form-item>
 
       <!------------------------ 提交 ---------------------------------->
@@ -111,10 +111,11 @@ import MdEditor from "@/components/MdEditor.vue";
 import { onMounted, ref, watch } from "vue";
 import { QuestionControllerService } from "../../../generated";
 import { Message } from "@arco-design/web-vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
-let title = "创建题目";
+const title = ref("创建题目");
 const route = useRoute();
+const router = useRouter();
 // 初始表单状态
 const initForm = ref({
   title: "",
@@ -140,7 +141,7 @@ const isUpdatePage = route.path.includes("update");
 // 如果要跳转到创建题目页面，那么更新标题，并更新表单到初始状态
 watch(route, (newRoute) => {
   if (newRoute.path === "/add/question") {
-    title = "创建题目";
+    title.value = "创建题目";
     form.value = { ...initForm.value };
   }
 });
@@ -160,7 +161,7 @@ const loadData = async () => {
   if (!id) {
     return;
   }
-  title = "更新题目";
+  title.value = "修改题目";
   const res = await QuestionControllerService.getQuestionByIdUsingGet(
     id as any
   );
@@ -224,6 +225,8 @@ const handleSubmit = async () => {
     );
     if (res.code === 0) {
       Message.success("更新题目成功！");
+      // 自动跳转到管理题目页
+      await router.push("/manage/question");
     } else {
       Message.error("更新题目失败！" + res.message);
     }
@@ -234,6 +237,8 @@ const handleSubmit = async () => {
     );
     if (res.code === 0) {
       Message.success("创建题目成功！");
+      // 自动跳转到浏览题目页
+      await router.push("/questions");
     } else {
       Message.error("创建题目失败！" + res.message);
     }
@@ -254,10 +259,13 @@ const onAnswerChange = (value: string) => {
 
 <style scoped>
 #addQuestionView {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
   h1 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    margin-left: 680px;
+    margin-bottom: 12px;
   }
 }
 </style>

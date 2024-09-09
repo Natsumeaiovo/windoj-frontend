@@ -1,24 +1,30 @@
 <template>
-  <div id="code-editor" ref="codeEditorRef" style="min-height: 400px" />
+  <div
+    id="code-editor"
+    ref="codeEditorRef"
+    style="min-height: 600px; height: 80vh"
+  />
 </template>
 
 <script setup lang="ts">
 import * as monaco from "monaco-editor";
-import { onMounted, ref, toRaw, withDefaults, defineProps } from "vue";
+import { onMounted, ref, toRaw, withDefaults, defineProps, watch } from "vue";
 
 /**
  * 定义组件属性类型
  */
 interface Props {
   value: string;
+  language: string;
   handleChange: (v: string) => void;
 }
 
 /**
- * 给组件指定初始值
+ * 给组件指定默认值
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
+  language: () => "java",
   handleChange: (v: string) => {
     console.log(v);
   },
@@ -27,6 +33,19 @@ const props = withDefaults(defineProps<Props>(), {
 const codeEditorRef = ref();
 const codeEditorObj = ref();
 
+watch(
+  () => props.language,
+  () => {
+    // 改变代码编辑器的语言
+    if (codeEditorObj.value) {
+      monaco.editor.setModelLanguage(
+        toRaw(codeEditorObj.value).getModel(),
+        props.language
+      );
+    }
+  }
+);
+
 onMounted(() => {
   // 实例必须存在，否则返回
   if (!codeEditorRef.value) {
@@ -34,7 +53,7 @@ onMounted(() => {
   }
   codeEditorObj.value = monaco.editor.create(codeEditorRef.value, {
     value: props.value, // 默认显示的值
-    language: "java",
+    language: props.language,
     automaticLayout: true, // 自动布局
     colorDecorators: true, // 颜色装饰器
     minimap: {

@@ -176,4 +176,8 @@ const login = () => {
 .avatar {
   margin-right: 50px;
 }
+
+#globalHeader * {
+  user-select: none;
+}
 </style>

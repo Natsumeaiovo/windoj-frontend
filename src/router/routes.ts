@@ -1,6 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import AdminView from "@/views/AdminView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
 import ACCESS_ENUM from "@/access/ACCESS_ENUM";
 import UserLayout from "@/layouts/UserLayout.vue";
@@ -8,6 +7,8 @@ import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
+import QuestionsView from "@/views/question/QuestionsView.vue";
+import DoQuestionView from "@/views/question/DoQuestionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -31,11 +32,31 @@ export const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
+    path: "/",
+    name: "主页",
+    component: HomeView,
+  },
+  {
+    path: "/questions",
+    name: "浏览题目",
+    component: QuestionsView,
+  },
+  {
+    path: "/view/question/:id",
+    name: "在线做题",
+    component: DoQuestionView,
+    props: true,
+    meta: {
+      access: ACCESS_ENUM.USER,
+      hideInMenu: true,
+    },
+  },
+  {
     path: "/add/question",
     name: "创建题目",
     component: AddQuestionView,
     meta: {
-      // access: ACCESS_ENUM.ADMIN,
+      access: ACCESS_ENUM.USER,
     },
   },
   {
@@ -54,22 +75,17 @@ export const routes: Array<RouteRecordRaw> = [
       access: ACCESS_ENUM.ADMIN,
     },
   },
-  {
-    path: "/",
-    name: "浏览题目",
-    component: HomeView,
-  },
-  {
-    path: "/admin",
-    name: "管理员可见",
-    component: AdminView,
-    meta: {
-      access: ACCESS_ENUM.ADMIN,
-    },
-  },
+  // {
+  //   path: "/admin",
+  //   name: "管理员可见",
+  //   component: AdminView,
+  //   meta: {
+  //     access: ACCESS_ENUM.ADMIN,
+  //   },
+  // },
   {
     path: "/about",
-    name: "关于",
+    name: "关于本站",
     // 路由级别代码分割
     // 这会为这个路由生成一个单独的 chunk 文件 (about.[hash].js)
     // 当访问这个路由时才会加载这个文件（lazy-load）
@@ -80,14 +96,6 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/noAuth",
     name: "无权限",
     component: NoAuthView,
-    meta: {
-      hideInMenu: true,
-    },
-  },
-  {
-    path: "/hide",
-    name: "隐藏页面",
-    component: HomeView,
     meta: {
       hideInMenu: true,
     },

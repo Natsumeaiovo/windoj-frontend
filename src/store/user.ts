@@ -1,7 +1,6 @@
 import { StoreOptions } from "vuex";
 import ACCESS_ENUM from "@/access/ACCESS_ENUM";
 import { User, UserControllerService } from "../../generated";
-import axios from "axios";
 import { Message } from "@arco-design/web-vue";
 
 export default {
@@ -19,7 +18,7 @@ export default {
      * @param commit
      * @param state
      */
-    async getLoginUser({ commit, state }) {
+    async getLoginUser({ commit }) {
       // 从远程请求获取登录信息,如果后端登录了，那么就自动更新state
       const res = await UserControllerService.getLoginUserUsingGet();
       if (res.code === 0) {
@@ -45,15 +44,17 @@ export default {
      * 检查cookie是否有效，如果无效则重置用户state
      * @param dispatch
      */
-    async checkCookieAndResetState({ dispatch }) {
+    async checkCookieAndResetState({ commit, dispatch }) {
       try {
         // 使用需要认证的接口来检查cookie是否有效
-        const response = await UserControllerService.getLoginUserUsingGet();
+        const res = await UserControllerService.getLoginUserUsingGet();
         // 如果返回了40100错误，那么就说明cookie无效
-        if (response.code === 40100) {
+        if (res.code === 40100) {
           Message.warning("用户登录信息已失效，请重新登录！");
+          console.log("cookie已过期，需要重新登陆！");
           dispatch("resetState");
         } else {
+          commit("updateUser", res.data);
           console.log("cookie没过期");
         }
       } catch (error) {
