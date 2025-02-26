@@ -7,7 +7,6 @@
         @menu-item-click="doMenuClick"
       >
         <a-menu-item
-          key="0"
           :style="{ padding: 0, marginRight: '30px', marginLeft: '0' }"
           disabled
         >
@@ -28,13 +27,10 @@
         <a-dropdown>
           <a-avatar
             class="avatar"
-            trigger-type="mask"
+            trigger-type="button"
             :size="52"
             :image-url="avatarUrl"
           >
-            <template #trigger-icon>
-              <IconEdit />
-            </template>
           </a-avatar>
           <template #content>
             <!-- todo 完成编辑个人资料、设置的开发-->
@@ -140,6 +136,7 @@ const login = () => {
 .title-bar {
   display: flex;
   align-items: center;
+  cursor: default;
 }
 
 .title {
@@ -175,6 +172,7 @@ const login = () => {
 
 .avatar {
   margin-right: 50px;
+  cursor: pointer;
 }
 
 #globalHeader * {

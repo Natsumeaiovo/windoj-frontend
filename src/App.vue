@@ -27,7 +27,7 @@ const route = useRoute();
  */
 const doInit = async () => {
   console.log(
-    "Welcome to windOJ⛵! Have fun! :)\n" +
+    "Welcome to windOJ⛵, have fun! :)\n" +
       "                   |    |    |\n" +
       "                  )_)  )_)  )_)\n" +
       "                 )___))___))___)\n" +

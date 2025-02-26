@@ -42,6 +42,7 @@ export default {
     },
     /**
      * 检查cookie是否有效，如果无效则重置用户state
+     * @param commit
      * @param dispatch
      */
     async checkCookieAndResetState({ commit, dispatch }) {

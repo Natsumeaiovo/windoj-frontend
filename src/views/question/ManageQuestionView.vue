@@ -52,7 +52,7 @@ const loadData = async () => {
   const res = await QuestionControllerService.listQuestionByPageUsingPost(
     searchParams.value
   );
-  // console.log(res);
+  console.log(res);
   if (res.code === 0) {
     dataList.value = res.data.records;
     total.value = res.data.total;

@@ -55,7 +55,6 @@
               <a-option value="java">Java</a-option>
               <a-option value="cpp">C++</a-option>
               <a-option value="go">GoLang</a-option>
-              <a-option>html</a-option>
             </a-select>
           </a-form-item>
           <a-form-item>
@@ -79,7 +78,6 @@ import { defineProps, onMounted, ref, withDefaults } from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
-  QuestionSubmitControllerService,
   QuestionVO,
 } from "../../../generated";
 import { Message } from "@arco-design/web-vue";
@@ -89,17 +87,18 @@ import MdViewer from "@/components/MdViewer.vue";
 const question = ref<QuestionVO>();
 
 interface Props {
-  id: string;
+  id: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  id: () => "",
+  id: () => 0,
 });
 
 /**
  * 通过分页查找参数向后端请求数据，将数据保存到dataList和total变量中
  */
 const loadData = async () => {
+  console.log("本题id：" + props.id);
   const res = await QuestionControllerService.getQuestionVoByIdUsingGet(
     props.id as any
   );
@@ -118,15 +117,17 @@ onMounted(() => {
 });
 
 const form = ref<QuestionSubmitAddRequest>({
-  questionId: Number(props.id),
+  questionId: props.id,
   language: "java",
   code: "",
 });
+
 /**
  * 提交代码
  */
 const doSubmit = async () => {
-  const res = await QuestionSubmitControllerService.doQuestionSubmitUsingPost(
+  console.log("提交题目id：" + form.value.questionId);
+  const res = await QuestionControllerService.doQuestionSubmitUsingPost(
     form.value as QuestionSubmitAddRequest
   );
   if (res.code === 0) {
